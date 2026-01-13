@@ -13,7 +13,7 @@ cd /path/to/GroverVisualiserQiskit/
 
 python -m venv groverEnv
 
-source ./groverEnv
+source ./groverEnv/bin/activate
 
 pip install -r requirements.txt
 
