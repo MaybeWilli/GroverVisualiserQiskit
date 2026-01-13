@@ -1,9 +1,6 @@
 ## Demo
 
-<video width="640" controls>
-  <source src="assets/grover.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+[![Grover Visualizer](assets/grover_demo.mp4)](assets/grover.mp4)
 
 Steps to run:
 
