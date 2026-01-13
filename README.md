@@ -1,6 +1,6 @@
 ## Demo
 
-[![Grover Visualizer](assets/grover_demo.mp4)](assets/grover.mp4)
+<video src="assets/grover.mp4" width="320" height="240" controls></video>
 
 Steps to run:
 
