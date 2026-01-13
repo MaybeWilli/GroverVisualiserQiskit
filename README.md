@@ -9,4 +9,6 @@ python -m venv groverEnv
 source ./groverEnv
 
 pip install -r requirements.txt
+
+python main.py
 ```
