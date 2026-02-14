@@ -76,12 +76,10 @@ class MyWindow(QWidget):
         painter.setFont(font)
         painter.setPen(QColor(100, 100, 100))  # RGB color
         painter.drawText(550, 300, "Controls:")
-        painter.drawText(550, 325, "W: Increase qubit count")
-        painter.drawText(550, 350, "S: Decrease qubit count")
-        painter.drawText(550, 375, "A: Increase solution count")
-        painter.drawText(550, 400, "D: Decrease solution count")
-        painter.drawText(550, 425, "Z: Increase iterations")
-        painter.drawText(550, 450, "X: Decrease iterations")
+        painter.drawText(550, 325, "W/S: +/- qubit count")
+        painter.drawText(550, 350, "A/D: +/- solution count")
+        painter.drawText(550, 375, "Z/X: +/- iterations")
+        painter.drawText(550, 400, "C/V: +/- error rate")
         painter.drawText(550, 475, "T: Start/stop")
     
     def display_stats(self, painter):
@@ -93,6 +91,7 @@ class MyWindow(QWidget):
         painter.drawText(550, 150, f"Number of items: {math.pow(2, self.grover.qubit_count)}")
         painter.drawText(550, 175, f"Number of solutions: {self.grover.solution_count}")
         painter.drawText(550, 200, f"Number of iterations: {self.grover.iterations}")
+        painter.drawText(550, 225, f"Error rate on H-gates: {self.grover.error_rate:.3f}")
     
     def display_results(self, painter):
         if (self.results[0]+self.results[1] != 0):

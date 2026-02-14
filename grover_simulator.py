@@ -5,6 +5,7 @@ from qiskit.result import marginal_distribution
 from qiskit.circuit.library import UGate, PhaseOracleGate
 from numpy import pi, random
 from qiskit.circuit.library import QFT, CDKMRippleCarryAdder
+from qiskit_aer.noise import NoiseModel, depolarizing_error
 
 from sympy import symbols
 from sympy.logic.boolalg import SOPform
@@ -12,10 +13,12 @@ import math
 
 
 class GroverSimulator:
-    def __init__(self, qubits, solutions, iterations):
+    def __init__(self, qubits, solutions, iterations, error_rate):
         self.qubit_count = qubits
         self.solution_count = solutions
         self.iterations = iterations
+        self.error_rate = error_rate
+
 
         self.solution_list = []
 
@@ -31,7 +34,11 @@ class GroverSimulator:
         
         #display(self.circuit.draw(output="mpl"))
         
-        self.sim = AerSimulator()
+        #noise
+        noise = NoiseModel()
+        noise.add_all_qubit_quantum_error(depolarizing_error(error_rate, 1), ['h'])
+
+        self.sim = AerSimulator(noise_model=noise)
         self.t_q = transpile(self.circuit, self.sim)
 
 
@@ -89,8 +96,16 @@ class GroverSimulator:
         return math.asin(math.sqrt(self.solution_count*1.0/math.pow(2, self.qubit_count)))
     
     def get_angle(self):
-        return 2 * self.get_theta() * self.iterations + self.get_theta()
+        if (self.error_rate == 0):
+            return 2 * self.get_theta() * self.iterations + self.get_theta()
+        else:
+            error = self.error_rate * 2 * self.qubit_count
+            theta = self.get_theta()
+            p = math.pow(math.e, -error*self.iterations) \
+                * math.pow(math.sin((2*self.iterations + 1)*theta), 2) \
+                + (1 - math.pow(math.e, -error*self.iterations)) * self.solution_count*1.0 / math.pow(2, self.qubit_count)
+            return math.asin(math.sqrt(p))
 
-g = GroverSimulator(3, 2, 2)
+#g = GroverSimulator(3, 2, 2)
 
-print(g.get_angle())
+#print(g.get_angle())

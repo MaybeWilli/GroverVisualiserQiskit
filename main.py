@@ -23,7 +23,9 @@ class GameController:
         self.qubit_count = 3
         self.solutions = 2
         self.iterations = 1
-        self.grover = GroverSimulator(self.qubit_count, self.solutions, self.iterations)
+        self.error_rate = 0.005
+        self.error_steps = 0 #this is done to avoid rounding errors
+        self.grover = GroverSimulator(self.qubit_count, self.solutions, self.iterations, 0)
         self.window.set_simulator(self.grover)
 
         #results
@@ -33,6 +35,9 @@ class GameController:
         #controlling simulation
         self.should_run = False
         self.shots = 0
+
+        #button control
+        self.is_pressed = False
 
     def key_press(self, key):
         self.keys.add(key)
@@ -48,36 +53,55 @@ class GameController:
         delta_time = delta_ms / 1000.0  # seconds
 
         updated = False
-        if Qt.Key.Key_W in self.keys:
-            updated = True
-            self.qubit_count += 1
-        if Qt.Key.Key_S in self.keys:
-            if (self.qubit_count > 2):
+        if not self.is_pressed:
+            if Qt.Key.Key_W in self.keys:
                 updated = True
-                self.qubit_count -= 1
+                self.qubit_count += 1
+            if Qt.Key.Key_S in self.keys:
+                if (self.qubit_count > 2):
+                    updated = True
+                    self.qubit_count -= 1
 
-        if Qt.Key.Key_A in self.keys:
-            updated = True
-            self.solutions += 1
-        if Qt.Key.Key_D in self.keys:
-            if (self.solutions > 1):
+            if Qt.Key.Key_A in self.keys:
                 updated = True
-                self.solutions -= 1
-        
-        if Qt.Key.Key_Z in self.keys:
-            updated = True
-            self.iterations += 1
-        if Qt.Key.Key_X in self.keys:
-            if (self.iterations > 1):
+                self.solutions += 1
+            if Qt.Key.Key_D in self.keys:
+                if (self.solutions > 1):
+                    updated = True
+                    self.solutions -= 1
+            
+            if Qt.Key.Key_Z in self.keys:
                 updated = True
-                self.iterations -= 1
+                self.iterations += 1
+            if Qt.Key.Key_X in self.keys:
+                if (self.iterations > 1):
+                    updated = True
+                    self.iterations -= 1
+            
+            if Qt.Key.Key_C in self.keys:
+                updated = True
+                self.error_steps += 1
+            if Qt.Key.Key_V in self.keys:
+                if (self.error_steps >= 1):
+                    updated = True
+                    self.error_steps -= 1
+            
+            self.is_pressed = updated
+        else:
+            keys = [Qt.Key.Key_W, Qt.Key.Key_S, Qt.Key.Key_A, Qt.Key.Key_D, Qt.Key.Key_Z, Qt.Key.Key_X, 
+                    Qt.Key.Key_C, Qt.Key.Key_V]
+            self.is_pressed = False
+            for x in keys:
+                if x in self.keys:
+                    self.is_pressed = True
+
         
         self.should_run = False
         if Qt.Key.Key_T in self.keys:
             self.should_run = True
         
         if (updated):
-            self.grover = GroverSimulator(self.qubit_count, self.solutions, self.iterations)
+            self.grover = GroverSimulator(self.qubit_count, self.solutions, self.iterations, self.error_rate*self.error_steps)
             self.window.set_simulator(self.grover)
             self.results = [0, 0]
         '''if Qt.Key.Key_S in self.keys:
